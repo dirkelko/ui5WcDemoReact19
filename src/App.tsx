@@ -5,9 +5,12 @@ import "@ui5/webcomponents/dist/TableHeaderRow.js";
 import "@ui5/webcomponents/dist/TableHeaderCell.js";
 import exercises from "./exercises";
 import "./App.css";
+import { setTheme } from '@ui5/webcomponents-base/dist/config/Theme.js';
 //import "../../../dirkelko/ui5-timer/src/Ui5Timer.js";
 import "ui5-timer/dist/Ui5Timer.js";
 import {useState} from "react";
+
+setTheme('sap_horizon_dark');
 
 //const exercises = async () => Workouts;
 
