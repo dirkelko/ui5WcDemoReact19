@@ -9,6 +9,7 @@ import { setTheme } from '@ui5/webcomponents-base/dist/config/Theme.js';
 //import "../../../dirkelko/ui5-timer/src/Ui5Timer.js";
 import "ui5-timer/dist/Ui5Timer.js";
 import {useState, useRef} from "react";
+import UI5Timer from "ui5-timer/dist/Ui5Timer.js";
 
 setTheme('sap_horizon_dark');
 
@@ -21,7 +22,8 @@ function App() {
   const [duration, setDuration] = useState(exercises[0].duration);
   const [round, setRound] = useState(exercises[0].round);
   const [exRound, setExRound] = useState(exercises[0].ex);
-  const timerRef = useRef(null);
+  const timerRef: any = useRef(null);
+  const colorOrange = {color: "orange"};
 
 
   function handleRowClick(event: CustomEvent ) {
@@ -45,7 +47,7 @@ function App() {
       setRound(ex.round);
       setExRound(ex.ex);
       timerRef.current.resetTimer();
-      timerRef.current.startTimer();
+      timerRef.current?.startTimer();
     }
   }
 
@@ -71,13 +73,16 @@ function App() {
         <ui5-table-header-cell id="roundCol" width="60px" importance="-1">Round</ui5-table-header-cell>
         <ui5-table-header-cell id="durationCol" min-width="40px" importance="2">Duration</ui5-table-header-cell>
         </ui5-table-header-row>
-          {exercises.map((exercise) => (
-            <ui5-table-row id={exercise.id} key={exercise.id} interactive>
-              <ui5-table-cell><ui5-label><b>{exercise.id}</b></ui5-label></ui5-table-cell>
-              <ui5-table-cell><ui5-label><b>{exercise.name}</b></ui5-label></ui5-table-cell>
-              <ui5-table-cell><ui5-label>{exercise.description}</ui5-label></ui5-table-cell>
-              <ui5-table-cell><ui5-label>{exercise.round}</ui5-label></ui5-table-cell>
-              <ui5-table-cell><ui5-label><b>{exercise.duration}</b></ui5-label></ui5-table-cell>
+          {exercises.map((ex) => (
+            <ui5-table-row id={ex.id} key={ex.id} interactive>
+              <ui5-table-cell><ui5-label><b>{ex.id}</b></ui5-label></ui5-table-cell>
+              { (exerciseId === ex.id)? 
+                <ui5-table-cell><ui5-label><b style={colorOrange}>{ex.name}</b></ui5-label></ui5-table-cell>:
+                <ui5-table-cell><ui5-label><b>{ex.name}</b></ui5-label></ui5-table-cell>
+              }
+              <ui5-table-cell><ui5-label>{ex.description}</ui5-label></ui5-table-cell>
+              <ui5-table-cell><ui5-label>{ex.round}</ui5-label></ui5-table-cell>
+              <ui5-table-cell><ui5-label><b>{ex.duration}</b></ui5-label></ui5-table-cell>
             </ui5-table-row>
           ))} 
       </ui5-table>
