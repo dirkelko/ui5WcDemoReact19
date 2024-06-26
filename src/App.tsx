@@ -9,7 +9,6 @@ import { setTheme } from '@ui5/webcomponents-base/dist/config/Theme.js';
 //import "../../../dirkelko/ui5-timer/src/Ui5Timer.js";
 import "ui5-timer/dist/Ui5Timer.js";
 import {useState, useRef} from "react";
-import UI5Timer from "ui5-timer/dist/Ui5Timer.js";
 
 setTheme('sap_horizon_dark');
 
