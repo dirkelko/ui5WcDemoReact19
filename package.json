@@ -13,7 +13,7 @@
     "@ui5/webcomponents": "^2.0.0-rc.6",
     "react": "npm:react@rc",
     "react-dom": "npm:react-dom@rc",
-    "ui5-timer": "^0.0.4"
+    "ui5-timer": "^0.0.5"
   },
   "devDependencies": {
     "@types/react": "npm:types-react@rc",
