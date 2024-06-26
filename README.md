@@ -5,22 +5,13 @@ It shows a timer above a list or workout exercises. Clicking on a exercise in th
 
 ## Dependencies
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+The demo app uses UI5 Web Components 2.0 RC6 and a custom UI5 Web Component ui5-timer (see package.json)
 
-- Configure the top-level `parserOptions` property like this:
+Clone th eproject and Start the demo with
 
 ```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-  },
-}
+npm i
+
+npm run dev
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
