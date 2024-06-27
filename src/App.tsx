@@ -21,6 +21,7 @@ function App() {
   const [duration, setDuration] = useState(exercises[0].duration);
   const [round, setRound] = useState(exercises[0].round);
   const [exRound, setExRound] = useState(exercises[0].ex);
+  const [tableIsInteractive, setTableIsInteractive] = useState(true);
   const timerRef: any = useRef(null);
   const colorOrange = {color: "orange"};
 
@@ -50,6 +51,16 @@ function App() {
     }
   }
 
+  function handleTimerStart(event: CustomEvent) {
+    console.log(`Timer started`);
+    setTableIsInteractive(false);
+  }
+
+  function handleTimerStop(event: CustomEvent) {
+    console.log(`Timer stopped`);
+    setTableIsInteractive(true);  
+  }
+
   return (
 
     <div>
@@ -62,6 +73,8 @@ function App() {
         duration={duration}
         vbox="0 0 1200 1200"
         ontimerFinished={handleTimerFinished}
+        ontimerStart={handleTimerStart}
+        ontimerStop={handleTimerStop}
       />
 
       <ui5-table id="table1" overflowMode="Popin" onrowClick={handleRowClick}>
@@ -73,7 +86,7 @@ function App() {
         <ui5-table-header-cell id="durationCol" min-width="40px" importance="2">Duration</ui5-table-header-cell>
         </ui5-table-header-row>
           {exercises.map((ex) => (
-            <ui5-table-row id={ex.id} key={ex.id} interactive>
+            <ui5-table-row id={ex.id} key={ex.id} interactive={tableIsInteractive}>
               <ui5-table-cell><ui5-label><b>{ex.id}</b></ui5-label></ui5-table-cell>
               { (exerciseId === ex.id)? 
                 <ui5-table-cell><ui5-label><b style={colorOrange}>{ex.name}</b></ui5-label></ui5-table-cell>:
