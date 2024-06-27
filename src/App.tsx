@@ -16,11 +16,7 @@ setTheme('sap_horizon_dark');
 //const exercises = async () => Workouts;
 
 function App() {
-  const [exerciseId, setExerciseId] = useState(exercises[0].id);
-  const [exercise, setExercise] = useState(exercises[0].name);
-  const [duration, setDuration] = useState(exercises[0].duration);
-  const [round, setRound] = useState(exercises[0].round);
-  const [exRound, setExRound] = useState(exercises[0].ex);
+  const [exercise, setExercise] = useState(exercises[0]);
   const [tableIsInteractive, setTableIsInteractive] = useState(true);
   const timerRef: any = useRef(null);
   const colorOrange = {color: "orange"};
@@ -29,23 +25,15 @@ function App() {
   function handleRowClick(event: CustomEvent ) {
     console.log(`Row clicked: ${event.detail.row.childNodes[0].innerText} ${event.detail.row.childNodes[1].innerText}`);
     let ex = exercises.find(ex => ex.id === parseInt(event.detail.row.id));
-    setExerciseId(ex!.id);
-    setExercise(ex!.name);
-    setDuration(ex!.duration);
-    setRound(ex!.round);
-    setExRound(ex!.ex);
+    setExercise(ex!);
   };
 
   function handleTimerFinished(event: CustomEvent) {
     console.log(`Timer finished`);
-    let ex = exercises.find(ex => ex.id === exerciseId+1);
+    let ex = exercises.find(ex => ex.id === exercise.id+1);
     console.log(ex);
     if (ex) {
-      setExerciseId(ex.id);
-      setExercise(ex.name);
-      setDuration(ex.duration);
-      setRound(ex.round);
-      setExRound(ex.ex);
+      setExercise(ex!);
       timerRef.current.resetTimer();
       timerRef.current?.startTimer();
     }
@@ -67,10 +55,10 @@ function App() {
         <ui5-timer 
         id="myTimer"
         ref={timerRef}
-        title={exercise}
-        sub-title={"Exercise " + exRound + "/" + exercises[exercises.length-1].ex}
-        sub-sub-title={"Round "+ round + "/" + exercises[exercises.length-1].round}
-        duration={duration}
+        title={exercise.name}
+        sub-title={"Exercise " + exercise.ex + "/" + exercises[exercises.length-1].ex}
+        sub-sub-title={"Round "+ exercise.round + "/" + exercises[exercises.length-1].round}
+        duration={exercise.duration}
         vbox="0 0 1200 1200"
         ontimerFinished={handleTimerFinished}
         ontimerStart={handleTimerStart}
@@ -88,7 +76,7 @@ function App() {
           {exercises.map((ex) => (
             <ui5-table-row id={ex.id} key={ex.id} interactive={tableIsInteractive}>
               <ui5-table-cell><ui5-label><b>{ex.id}</b></ui5-label></ui5-table-cell>
-              { (exerciseId === ex.id)? 
+              { (exercise.id === ex.id)? 
                 <ui5-table-cell><ui5-label><b style={colorOrange}>{ex.name}</b></ui5-label></ui5-table-cell>:
                 <ui5-table-cell><ui5-label><b>{ex.name}</b></ui5-label></ui5-table-cell>
               }
