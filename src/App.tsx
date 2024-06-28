@@ -24,12 +24,12 @@ function App() {
 
   function handleRowClick(event: CustomEvent ) {
     console.log(`Row clicked: ${event.detail.row.childNodes[0].innerText} ${event.detail.row.childNodes[1].innerText}`);
-    let ex = exercises.find(ex => ex.id === parseInt(event.detail.row.id));
+    let ex = exercises.find(ex => ex.id === parseInt(event.detail.row.getAttribute("row-id")));
     setExercise(ex!);
   };
 
   function handleTimerFinished(event: CustomEvent) {
-    console.log(`Timer finished`);
+    console.log(`Timer finished ${event.type}`);
     let ex = exercises.find(ex => ex.id === exercise.id+1);
     console.log(ex);
     if (ex) {
@@ -40,19 +40,19 @@ function App() {
   }
 
   function handleTimerStart(event: CustomEvent) {
-    console.log(`Timer started`);
+    console.log(`Timer started ${event.type}`);
     setTableIsInteractive(false);
   }
 
   function handleTimerStop(event: CustomEvent) {
-    console.log(`Timer stopped`);
+    console.log(`Timer stopped ${event.type}`);
     setTableIsInteractive(true);  
   }
 
   return (
 
     <div>
-        <ui5-timer 
+      <ui5-timer 
         id="myTimer"
         ref={timerRef}
         title={exercise.name}
@@ -65,7 +65,7 @@ function App() {
         ontimerStop={handleTimerStop}
       />
 
-      <ui5-table id="table1" overflowMode="Popin" onrowClick={handleRowClick}>
+      <ui5-table id="table1" overflowMode="Popin" onrow-click={handleRowClick}> 
         <ui5-table-header-row slot="headerRow">
         <ui5-table-header-cell id="idCol" importance="3" width="50px"><span>Id</span></ui5-table-header-cell>
         <ui5-table-header-cell id="nameCol" importance="1" width="300px"><span>Name</span></ui5-table-header-cell>
@@ -74,7 +74,7 @@ function App() {
         <ui5-table-header-cell id="durationCol" min-width="40px" importance="2">Duration</ui5-table-header-cell>
         </ui5-table-header-row>
           {exercises.map((ex) => (
-            <ui5-table-row id={ex.id} key={ex.id} interactive={tableIsInteractive}>
+            <ui5-table-row row-id={ex.id} key={ex.id} interactive={tableIsInteractive}>
               <ui5-table-cell><ui5-label><b>{ex.id}</b></ui5-label></ui5-table-cell>
               { (exercise.id === ex.id)? 
                 <ui5-table-cell><ui5-label><b style={colorOrange}>{ex.name}</b></ui5-label></ui5-table-cell>:

@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"html.customData": [
+			"node_modules/ui5-timer/dist/vscode.html-custom-data.json"
+		]
+	}
+}
