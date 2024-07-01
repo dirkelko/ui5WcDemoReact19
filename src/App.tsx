@@ -1,4 +1,4 @@
-import "@ui5/webcomponents/dist/Label.js";
+import "@ui5/webcomponents/dist/Text.js";
 import "@ui5/webcomponents/dist/Table.js";
 import "@ui5/webcomponents/dist/TableCell.js";
 import "@ui5/webcomponents/dist/TableHeaderRow.js";
@@ -19,7 +19,9 @@ function App() {
   const [exercise, setExercise] = useState(exercises[0]);
   const [tableIsInteractive, setTableIsInteractive] = useState(true);
   const timerRef: any = useRef(null);
-  const colorOrange = {color: "orange"};
+  const colorOrange = {color: "var(--sapCriticalElementColor)"};
+  const colorWhite = {color: "var(--sapTextColor)"};
+  let textColor: string;
 
 
   function handleRowClick(event: CustomEvent ) {
@@ -65,7 +67,7 @@ function App() {
         ontimerStop={handleTimerStop}
       />
 
-      <ui5-table id="table1" overflowMode="Popin" onrow-click={handleRowClick}> 
+      <ui5-table id="table1" overflowMode="Popin" onrowClick={handleRowClick}> 
         <ui5-table-header-row slot="headerRow">
         <ui5-table-header-cell id="idCol" importance="3" width="50px"><span>Id</span></ui5-table-header-cell>
         <ui5-table-header-cell id="nameCol" importance="1" width="300px"><span>Name</span></ui5-table-header-cell>
@@ -75,14 +77,12 @@ function App() {
         </ui5-table-header-row>
           {exercises.map((ex) => (
             <ui5-table-row row-id={ex.id} key={ex.id} interactive={tableIsInteractive}>
-              <ui5-table-cell><ui5-label><b>{ex.id}</b></ui5-label></ui5-table-cell>
-              { (exercise.id === ex.id)? 
-                <ui5-table-cell><ui5-label><b style={colorOrange}>{ex.name}</b></ui5-label></ui5-table-cell>:
-                <ui5-table-cell><ui5-label><b>{ex.name}</b></ui5-label></ui5-table-cell>
-              }
-              <ui5-table-cell><ui5-label>{ex.description}</ui5-label></ui5-table-cell>
-              <ui5-table-cell><ui5-label>{ex.round}</ui5-label></ui5-table-cell>
-              <ui5-table-cell><ui5-label><b>{ex.duration}</b></ui5-label></ui5-table-cell>
+               {textColor = (exercise.id === ex.id)? "var(--sapCriticalElementColor)" : "var(--sapTextColor)"}
+              <ui5-table-cell><ui5-text><b style={{color: textColor}}>{ex.id}</b></ui5-text></ui5-table-cell>
+              <ui5-table-cell><ui5-text><b style={{color: textColor}}>{ex.name}</b></ui5-text></ui5-table-cell>
+              <ui5-table-cell><ui5-text style={{color: textColor}}>{ex.description}</ui5-text></ui5-table-cell>
+              <ui5-table-cell><ui5-text style={{color: textColor}}>{ex.round}</ui5-text></ui5-table-cell>
+              <ui5-table-cell><ui5-text><b style={{color: textColor}}>{ex.duration}</b></ui5-text></ui5-table-cell>
             </ui5-table-row>
           ))} 
       </ui5-table>

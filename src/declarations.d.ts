@@ -6,7 +6,7 @@ declare namespace JSX {
         "ui5-table-header-cell": unknown;
         "ui5-table-row": unknown;
         "ui5-table-cell": unknown;
-        "ui5-label": unknown;
+        "ui5-text": unknown;
         "ui5-list": unknown;
         "ui5-li": unknown;
         "ui5-timer": unknown;
