@@ -6,7 +6,7 @@ import "@ui5/webcomponents/dist/TableHeaderCell.js";
 import exercises from "./exercises";
 import "./App.css";
 import { setTheme } from '@ui5/webcomponents-base/dist/config/Theme.js';
-//import "../../../dirkelko/ui5-timer/src/Ui5Timer.js";
+//import "../../../dirkelko/ui5-timer/dist/Ui5Timer.js";
 import "ui5-timer/dist/Ui5Timer.js";
 import {useState, useRef} from "react";
 
@@ -19,15 +19,14 @@ function App() {
   const [exercise, setExercise] = useState(exercises[0]);
   const [tableIsInteractive, setTableIsInteractive] = useState(true);
   const timerRef: any = useRef(null);
-  const colorOrange = {color: "var(--sapCriticalElementColor)"};
-  const colorWhite = {color: "var(--sapTextColor)"};
-  let textColor: string;
 
+  let textColor: string;
 
   function handleRowClick(event: CustomEvent ) {
     console.log(`Row clicked: ${event.detail.row.childNodes[0].innerText} ${event.detail.row.childNodes[1].innerText}`);
     let ex = exercises.find(ex => ex.id === parseInt(event.detail.row.getAttribute("row-id")));
     setExercise(ex!);
+    timerRef.current.resetTimer();
   };
 
   function handleTimerFinished(event: CustomEvent) {

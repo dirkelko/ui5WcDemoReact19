@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "clean": "vite clobber",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -14,7 +13,7 @@
     "@ui5/webcomponents": "^2.0.0-rc.6",
     "react": "npm:react@rc",
     "react-dom": "npm:react-dom@rc",
-    "ui5-timer": "^0.0.7"
+    "ui5-timer": "^0.0.12"
   },
   "devDependencies": {
     "@types/react": "npm:types-react@rc",
