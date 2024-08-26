@@ -98,9 +98,9 @@ function App() {
         sub-sub-title={"Round "+ exercise.round + "/" + exercises[exercises.length-1].round}
         duration={exercise.duration}
         vbox="0 0 1200 1200"
-        ontimerFinished={handleTimerFinished}
-        ontimerStart={handleTimerStart}
-        ontimerStop={handleTimerStop}
+        ontimer-finished={handleTimerFinished}
+        ontimer-start={handleTimerStart}
+        ontimer-stop={handleTimerStop}
       />
 
 
