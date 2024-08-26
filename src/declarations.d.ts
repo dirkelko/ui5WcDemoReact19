@@ -9,6 +9,14 @@ declare namespace JSX {
         "ui5-text": unknown;
         "ui5-list": unknown;
         "ui5-li": unknown;
+        "ui5-button": unknown;
         "ui5-timer": unknown;
+        "ui5-dialog": unknown;
+        "ui5-selection-panel": unknown;
+        "ui5-tab": unknown;
+        "ui5-tabcontainer": unknown;
+        "ui5-message-strip": unknown;
+        "ui5-bar": unknown;
+        "ui5-title": unknown;
     }
   }

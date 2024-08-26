@@ -7,7 +7,7 @@ It shows a timer above a list or workout exercises. Clicking on a exercise in th
 
 The demo app uses UI5 Web Components 2.0 RC6 and a custom UI5 Web Component ui5-timer (see package.json)
 
-Clone the project and Start the demo with
+Clone the project and start the demo with
 
 ```js
 npm i
