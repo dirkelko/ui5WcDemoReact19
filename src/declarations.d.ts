@@ -18,5 +18,6 @@ declare namespace JSX {
         "ui5-message-strip": unknown;
         "ui5-bar": unknown;
         "ui5-title": unknown;
+        "ui5-p13n-item": unknown;
     }
   }

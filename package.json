@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@repo/webcomponents-p13n": "file:./p13n-package/repo-webcomponents-p13n-0.0.1.tgz",
+    "@repo/webcomponents-p13n": "file:/Users/d022361/Development/ui5/webcomponents-p13n/packages/webcomponents-p13n/repo-webcomponents-p13n-0.0.1.tgz",
     "@ui5/webcomponents": "^2.0.1",
     "react": "npm:react@rc",
     "react-dom": "npm:react-dom@rc",
@@ -22,6 +22,7 @@
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react": "^4.2.1",
+    "cds2types": "^3.0.0",
     "eslint": "^8.57.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
