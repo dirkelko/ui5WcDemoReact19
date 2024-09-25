@@ -92,29 +92,26 @@ function App() {
     console.log(`Handle Dialog Change ${event.type}`);
     const change = event.detail
     if (change.reason === "Remove") {
-      intP13nData.find(col=> col.name === change.item.name).visible = false;
+      intP13nData.find((col:any)=> col.name === change.item.name).visible = false;
     } else if (change.reason === "Add") {
-      intP13nData.find(col=> col.name === change.item.name).visible = true;
+      intP13nData.find((col:any)=> col.name === change.item.name).visible = true;
     } else if (change.reason === "RangeSelect") {
-      change.item.forEach(item=> {
-        intP13nData.find(col => col.name === item.name).visible = true;
+      change.item.forEach((item:any)=> {
+        intP13nData.find((col:any) => col.name === item.name).visible = true;
       })
     }else if (change.reason === "DeselectAll") {
-      change.item.forEach(item=> {
-        intP13nData.find(col => col.name === item.name).visible = false;
+      change.item.forEach((item:any)=> {
+        intP13nData.find((col:any) => col.name === item.name).visible = false;
       })
     }else if (change.reason === "SelectAll") {
-      change.item.forEach(item=> {
-        intP13nData.find(col => col.name === item.name).visible = true;
+      change.item.forEach((item:any)=> {
+        intP13nData.find((col:any) => col.name === item.name).visible = true;
       })
     }else if (change.reason === "Move") {
-      const index = change.index;
-      const itemId = change.item.name;
-      const currentIndex = intP13nData.findIndex(col => col.name === itemId);
-  
-      if (currentIndex !== -1) {
+      const currentIndex = intP13nData.findIndex((col:any) => col.name === change.item.name);
+        if (currentIndex !== -1) {
         const [movedItem] = intP13nData.splice(currentIndex, 1); // Remove the item from its current position
-        intP13nData.splice(index, 0, movedItem); // Insert the item at the new position
+        intP13nData.splice(change.index, 0, movedItem); // Insert the item at the new position
       }
     }
     setP13nData(intP13nData)
@@ -184,7 +181,7 @@ function App() {
 		  </ui5-bar>
       <ui5-table id="exercisesTable" overflowMode="Popin" onrow-click={handleRowClick}> 
         <ui5-table-header-row slot="headerRow">
-          {p13nData.filter(col=>col.visible).map((col) => (
+          {p13nData.filter((col:any)=>col.visible).map((col:any) => (
             <ui5-table-header-cell id={col.name} ><span>{col.label}</span></ui5-table-header-cell>
           ))}
 
@@ -192,7 +189,7 @@ function App() {
           {exercises.map((ex) => (
             <ui5-table-row row-key={ex.id} key={ex.id} interactive={tableIsInteractive}>
                {textColor = (exercise.id === ex.id)? "var(--sapCriticalElementColor)" : "var(--sapTextColor)"}
-               {p13nData.filter(col=>col.visible).map((col) => (
+               {p13nData.filter((col:any)=>col.visible).map((col:any) => (
                   <ui5-table-cell><ui5-text><b style={{color: textColor}}>{ex[col.name]}</b></ui5-text></ui5-table-cell>
               ))}
             </ui5-table-row>
