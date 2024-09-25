@@ -23,17 +23,8 @@ import "@repo/webcomponents-p13n/dist/P13nItem.js";
 setTheme('sap_horizon_dark');
 
 const persistedP13nData = localStorage.getItem("p13nData") && JSON.parse(localStorage.getItem("p13nData"));
-/*
-const initialP13nData = persistedP13nData || [
-  { visible: true, selected: false, name: "Id", label: "Id", id:"id", importance:"3", width:"50px" },
-  { visible: true, selected: false, name: "Name", label: "Name", id:"name", importance:"1", width:"300px" },
-  { visible: true, selected: false, name: "Desription", label: "Description", id:"description", importance:"3", width:"300px" },
-  { visible: true, selected: false, name: "Round", label: "Round", id:"round", importance:"-1", width:"60px" },
-  { visible: false, selected: false, name: "Duration", label: "Duration", id:"duration", importance:"2", width:"70px" }
-];
-*/
 
-const initialP13nData = persistedP13nData || [
+let intP13nData = persistedP13nData || [
   { visible: true, selected: false, name: "id", label: "Id"},
   { visible: true, selected: false, name: "name", label: "Name"},
   { visible: true, selected: false, name: "description", label: "Description"},
@@ -45,7 +36,7 @@ function App() {
   const [exercise, setExercise] = useState(exercises[0]);
   const [tableIsInteractive, setTableIsInteractive] = useState(true);
   const [p13nOpen, setP13nOpen] = useState(false);
-  const [p13nData, setP13nData] = useState(initialP13nData);
+  const [p13nData, setP13nData] = useState(intP13nData);
   const timerRef: any = useRef(null);
 
   let textColor: string;
@@ -99,30 +90,34 @@ function App() {
   
   function handleP13nChange(event: CustomEvent) {
     console.log(`Handle Dialog Change ${event.type}`);
-    //const p13nPanel = document.getElementById("selectionPanel");
     const change = event.detail
     if (change.reason === "Remove") {
-      event.target!._p13nData.find(col => col.name === change.item.name).visible = false;
+      intP13nData.find(col=> col.name === change.item.name).visible = false;
     } else if (change.reason === "Add") {
-      event.target!._p13nData.find(col => col.name === change.item.name).visible = true;
+      intP13nData.find(col=> col.name === change.item.name).visible = true;
     } else if (change.reason === "RangeSelect") {
       change.item.forEach(item=> {
-        event.target!._p13nData.find(col => col.name === item.name).visible = true;
+        intP13nData.find(col => col.name === item.name).visible = true;
       })
     }else if (change.reason === "DeselectAll") {
       change.item.forEach(item=> {
-        event.target!._p13nData.find(col => col.name === item.name).visible = false;
+        intP13nData.find(col => col.name === item.name).visible = false;
       })
     }else if (change.reason === "SelectAll") {
       change.item.forEach(item=> {
-        event.target!._p13nData.find(col => col.name === item.name).visible = true;
+        intP13nData.find(col => col.name === item.name).visible = true;
       })
-    }else if (change.reason === "RangeSelect") {
-      change.item.forEach(item=> {
-        event.target!._p13nData.find(col => col.name === item.name).visible = true;
-      })
+    }else if (change.reason === "Move") {
+      const index = change.index;
+      const itemId = change.item.name;
+      const currentIndex = intP13nData.findIndex(col => col.name === itemId);
+  
+      if (currentIndex !== -1) {
+        const [movedItem] = intP13nData.splice(currentIndex, 1); // Remove the item from its current position
+        intP13nData.splice(index, 0, movedItem); // Insert the item at the new position
+      }
     }
-    setP13nData(event.target!._p13nData)
+    setP13nData(intP13nData)
   
   }
 
@@ -168,14 +163,14 @@ function App() {
           onchange={handleP13nChange}
         >
           <ui5-message-strip design="Positive" hide-close-button slot="messageStrip">Success Message</ui5-message-strip>
-          {p13nData.map((p13nItem) => (
+          {p13nData.map((item: any) => (
             <ui5-p13n-item
-				      name={p13nItem.name}
-				      label={p13nItem.label}
-				      selected={p13nItem.selected || undefined}
-				      visible={p13nItem.visible || undefined}
+				      name={item.name}
+				      label={item.label}
+				      selected={item.selected || undefined}
+				      visible={item.visible || undefined}
 			      >
-          </ui5-p13n-item>
+            </ui5-p13n-item>
           ))}
         </ui5-selection-panel>
 

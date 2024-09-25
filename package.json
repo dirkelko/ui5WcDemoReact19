@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@repo/webcomponents-p13n": "file:/Users/d022361/Development/ui5/webcomponents-p13n/packages/webcomponents-p13n/repo-webcomponents-p13n-0.0.1.tgz",
+    "@repo/webcomponents-p13n": "file:./p13n-package/repo-webcomponents-p13n-0.0.1.tgz",
     "@ui5/webcomponents": "^2.0.1",
     "react": "npm:react@rc",
     "react-dom": "npm:react-dom@rc",
