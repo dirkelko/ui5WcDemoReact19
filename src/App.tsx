@@ -109,13 +109,13 @@ function App() {
       })
     }else if (change.reason === "Move") {
       const currentIndex = intP13nData.findIndex((col:any) => col.name === change.item.name);
-        if (currentIndex !== -1) {
+      if (currentIndex !== -1) {
         const [movedItem] = intP13nData.splice(currentIndex, 1); // Remove the item from its current position
         intP13nData.splice(change.index, 0, movedItem); // Insert the item at the new position
       }
     }
-    setP13nData(intP13nData)
-  
+    let newP13nData = [...intP13nData]; // Create a copy of the original array so that react sees that the order has been changed
+    setP13nData(newP13nData)
   }
 
   return (
@@ -160,8 +160,9 @@ function App() {
           onchange={handleP13nChange}
         >
           <ui5-message-strip design="Positive" hide-close-button slot="messageStrip">Success Message</ui5-message-strip>
-          {p13nData.map((item: any) => (
+          {p13nData.map((item: any, index: number) => (
             <ui5-p13n-item
+              key={index}
 				      name={item.name}
 				      label={item.label}
 				      selected={item.selected || undefined}
