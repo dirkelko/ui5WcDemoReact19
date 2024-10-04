@@ -22,7 +22,7 @@ import "@repo/webcomponents-p13n/dist/P13nItem.js";
 
 setTheme('sap_horizon_dark');
 
-const persistedP13nData = localStorage.getItem("p13nData") && JSON.parse(localStorage.getItem("p13nData"));
+const persistedP13nData = localStorage.getItem("p13nData") && JSON.parse(localStorage.getItem("p13nData")!);
 
 let intP13nData = persistedP13nData || [
   { visible: true, selected: false, name: "id", label: "Id"},
@@ -37,6 +37,7 @@ function App() {
   const [tableIsInteractive, setTableIsInteractive] = useState(true);
   const [p13nOpen, setP13nOpen] = useState(false);
   const [p13nData, setP13nData] = useState(intP13nData);
+  const [tableData, setTableData] = useState(JSON.parse(JSON.stringify(intP13nData)));
   const timerRef: any = useRef(null);
 
   let textColor: string;
@@ -69,11 +70,19 @@ function App() {
     setTableIsInteractive(true);  
   }
 
-  function handleP13NDialog(event: CustomEvent) {
-    console.log(`Handle P13N Dialog ${event.type}`);
-    //const p13nPanel = document.getElementById("selectionPanel");
+  function handleP13nDialog(event: CustomEvent) {
+    console.log(`Handle P13n Dialog OK ${event.type}`);
+    setTableData(JSON.parse(JSON.stringify(intP13nData)))
 
-    //setP13nData(p13nPanel._p13nData);
+    localStorage.setItem("p13nData", JSON.stringify(p13nData));
+    setP13nOpen(false);
+
+  }
+  
+  function handleP13nCancel(event: CustomEvent) {
+    console.log(`Handle P13n Dialog Cancel ${event.type}`);
+    setP13nData(JSON.parse(JSON.stringify(tableData)))
+
     localStorage.setItem("p13nData", JSON.stringify(p13nData));
     setP13nOpen(false);
 
@@ -114,8 +123,8 @@ function App() {
         intP13nData.splice(change.index, 0, movedItem); // Insert the item at the new position
       }
     }
-    let newP13nData = [...intP13nData]; // Create a copy of the original array so that react sees that the order has been changed
-    setP13nData(newP13nData)
+    //let newP13nData = JSON.parse(JSON.stringify(intP13nData)); // Create a copy of the original array so that react sees that the order has been changed
+    setP13nData(JSON.parse(JSON.stringify(intP13nData)))
   }
 
   return (
@@ -135,42 +144,54 @@ function App() {
       />
 
 
-      <ui5-dialog id="dialog" style={{height:'55rem', width:'45rem'}} header-text="View Settings" open={p13nOpen}>
+      <ui5-dialog id="dialog" style={{height:'40rem', width:'45rem'}} header-text="View Settings" open={p13nOpen}>
 
-        <ui5-tabcontainer fixed collapsed>
-          <ui5-tab text="Columns" selected></ui5-tab>
-          <ui5-tab text="Sort"></ui5-tab>
+        <ui5-tabcontainer fixed >
+          <ui5-tab text="Columns" selected height="100%">
+            <ui5-selection-panel
+            id="selectionPanel"
+            enable-count
+            enable-reorder
+            show-header
+            field-column="A Column"
+            active-column="Another one"
+            style={{width:'100%'}}
+            onchange={handleP13nChange}
+          >
+
+            <ui5-message-strip design="Positive" hide-close-button slot="messageStrip">Success Message</ui5-message-strip>
+              {p13nData.map((item: any, index: number) => (
+                <ui5-p13n-item
+                  key={index}
+                  name={item.name}
+                  label={item.label}
+                  selected={item.selected || undefined}
+                  visible={item.visible || undefined}
+                ></ui5-p13n-item>
+              ))}
+            </ui5-selection-panel>
+          </ui5-tab>
+          <ui5-tab text="Sort" height="100%">
+            <ui5-sort-panel id="sortPanel" title="Sort">
+              {p13nData.map((item: any, index: number) => (
+                <ui5-p13n-sort-item
+                  key={index}
+                  name={item.name}
+                  label={item.label}
+                  ascending="false"
+                  descending="false"
+                ></ui5-p13n-sort-item>
+              ))}            
+            </ui5-sort-panel>            
+          </ui5-tab>
           <ui5-tab text="Group"></ui5-tab>
         </ui5-tabcontainer>
 
         <div slot="footer" style={{display: "flex", justifyContent: 'flex-end',width: '100%', alignItems: 'center'}}>
           <div style={{flex: 1}}></div>
-          <ui5-button class="dialogCloser" design="Emphasized" style={{marginRight: '0.5rem'}} onClick={handleP13NDialog}>OK</ui5-button>
-          <ui5-button class="dialogCloser" design="Transparent" onClick={()=>setP13nOpen(false)}>Cancel</ui5-button>
+          <ui5-button class="dialogCloser" design="Emphasized" style={{marginRight: '0.5rem'}} onClick={handleP13nDialog}>OK</ui5-button>
+          <ui5-button class="dialogCloser" design="Transparent" onClick={handleP13nCancel}>Cancel</ui5-button>
         </div>
-
-        <ui5-selection-panel
-          id="selectionPanel"
-          enable-count
-          enable-reorder
-          show-header
-          field-column="A Column"
-          active-column="Another one"
-          style={{width:'100%'}}
-          onchange={handleP13nChange}
-        >
-          <ui5-message-strip design="Positive" hide-close-button slot="messageStrip">Success Message</ui5-message-strip>
-          {p13nData.map((item: any, index: number) => (
-            <ui5-p13n-item
-              key={index}
-				      name={item.name}
-				      label={item.label}
-				      selected={item.selected || undefined}
-				      visible={item.visible || undefined}
-			      >
-            </ui5-p13n-item>
-          ))}
-        </ui5-selection-panel>
 
       </ui5-dialog>
 
@@ -182,7 +203,7 @@ function App() {
 		  </ui5-bar>
       <ui5-table id="exercisesTable" overflowMode="Popin" onrow-click={handleRowClick}> 
         <ui5-table-header-row slot="headerRow">
-          {p13nData.filter((col:any)=>col.visible).map((col:any) => (
+          {tableData.filter((col:any)=>col.visible).map((col:any) => (
             <ui5-table-header-cell id={col.name} ><span>{col.label}</span></ui5-table-header-cell>
           ))}
 
@@ -190,7 +211,7 @@ function App() {
           {exercises.map((ex) => (
             <ui5-table-row row-key={ex.id} key={ex.id} interactive={tableIsInteractive}>
                {textColor = (exercise.id === ex.id)? "var(--sapCriticalElementColor)" : "var(--sapTextColor)"}
-               {p13nData.filter((col:any)=>col.visible).map((col:any) => (
+               {tableData.filter((col:any)=>col.visible).map((col:any) => (
                   <ui5-table-cell><ui5-text><b style={{color: textColor}}>{ex[col.name]}</b></ui5-text></ui5-table-cell>
               ))}
             </ui5-table-row>
