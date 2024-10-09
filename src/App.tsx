@@ -12,24 +12,35 @@ import "@ui5/webcomponents-icons/dist/AllIcons.js"
 
 import exercises from "./exercises";
 import "./App.css";
-import { setTheme } from '@ui5/webcomponents-base/dist/config/Theme.js';
 //import "../../../dirkelko/ui5-timer/dist/Ui5Timer.js";
-import "ui5-timer/dist/Ui5Timer.js";
-import {useState, useRef} from "react";
+//import "ui5-timer/dist/Ui5Timer.js";
+import {useState, useRef, SyntheticEvent} from "react";
 
 import "@repo/webcomponents-p13n/dist/SelectionPanel.js";
 import "@repo/webcomponents-p13n/dist/P13nItem.js";
+import "@repo/webcomponents-p13n/dist/GroupPanel.js";
+import "@repo/webcomponents-p13n/dist/P13nPopup.js";
+import "@repo/webcomponents-p13n/dist/P13nGroupItem.js";
+import "@repo/webcomponents-p13n/dist/SortPanel.js";
+import "@repo/webcomponents-p13n/dist/P13nSortItem.js";
+import "@repo/webcomponents-p13n/dist/FilterPanel.js";
+import "@repo/webcomponents-p13n/dist/P13nFilterItem.js";
 
-setTheme('sap_horizon_dark');
+//import "@ui5/webcomponents/dist/Assets.js";
+//import "@ui5/webcomponents-fiori/dist/Assets.js";
+//import "@ui5/webcomponents-icons/dist/Assets.js";
+//import { setTheme } from "@ui5/webcomponents-base/dist/config/Theme.js";
+
+//setTheme('sap_horizon');
 
 const persistedP13nData = localStorage.getItem("p13nData") && JSON.parse(localStorage.getItem("p13nData")!);
 
 let intP13nData = persistedP13nData || [
-  { visible: true, selected: false, name: "id", label: "Id"},
-  { visible: true, selected: false, name: "name", label: "Name"},
-  { visible: true, selected: false, name: "description", label: "Description"},
-  { visible: true, selected: false, name: "round", label: "Round"},
-  { visible: true, selected: false, name: "duration", label: "Duration"}
+  { name: "id",           label: "Id",          visible: true, selected: false, descending: false, ascending: false, grouped: false, filter: null},
+  { name: "name",         label: "Name",        visible: true, selected: false, descending: false, ascending: false, grouped: false, filter: null},
+  { name: "description",  label: "Description", visible: true, selected: false, descending: false, ascending: false, grouped: false, filter: null},
+  { name: "round",        label: "Round",       visible: true, selected: false, descending: false, ascending: false, grouped: false, filter: null},
+  { name: "duration",     label: "Duration",    visible: true, selected: false, descending: false, ascending: false, grouped: false, filter: null}
 ];
 
 function App() {
@@ -90,20 +101,17 @@ function App() {
 
   function handleP13nDialogOpener(event: CustomEvent) {
     console.log(`Handle Dialog Opener ${event.type}`);
-    //const p13nPanel = document.getElementById("selectionPanel");
-
-		//p13nPanel.p13nData = p13nData;
     setP13nOpen(true);  
   
   }  
   
-  function handleP13nChange(event: CustomEvent) {
-    console.log(`Handle Dialog Change ${event.type}`);
-    const change = event.detail
+  function handleP13nChangeSelection({nativeEvent}: SyntheticEvent<HTMLElement,CustomEvent>) {
+    console.log(`Handle Dialog Change ${nativeEvent.detail.reason}`);
+    const change = nativeEvent.detail
     if (change.reason === "Remove") {
-      intP13nData.find((col:any)=> col.name === change.item.name).visible = false;
+      intP13nData.find((col:any)=> col.name === change.item[0].name).visible = false;
     } else if (change.reason === "Add") {
-      intP13nData.find((col:any)=> col.name === change.item.name).visible = true;
+      intP13nData.find((col:any)=> col.name === change.item[0].name).visible = true;
     } else if (change.reason === "RangeSelect") {
       change.item.forEach((item:any)=> {
         intP13nData.find((col:any) => col.name === item.name).visible = true;
@@ -117,7 +125,7 @@ function App() {
         intP13nData.find((col:any) => col.name === item.name).visible = true;
       })
     }else if (change.reason === "Move") {
-      const currentIndex = intP13nData.findIndex((col:any) => col.name === change.item.name);
+      const currentIndex = intP13nData.findIndex((col:any) => col.name === change.item[0].name);
       if (currentIndex !== -1) {
         const [movedItem] = intP13nData.splice(currentIndex, 1); // Remove the item from its current position
         intP13nData.splice(change.index, 0, movedItem); // Insert the item at the new position
@@ -127,98 +135,173 @@ function App() {
     setP13nData(JSON.parse(JSON.stringify(intP13nData)))
   }
 
-  return (
+  function handleP13nChangeFilter({nativeEvent}: SyntheticEvent<HTMLElement,CustomEvent>) {
+    console.log(`Handle Change Filter ${nativeEvent.detail.reason}`);
+    let name = nativeEvent.detail.item[0].name
+  }
 
+  function handleP13nChangeSorting({nativeEvent}: SyntheticEvent<HTMLElement,CustomEvent>) {
+    console.log(`Handle Change Sorting ${nativeEvent.detail.reason}`);
+    let name = nativeEvent.detail.item[0].name
+    intP13nData.find((col:any) => col.name === name).ascending = nativeEvent.detail.item[0].ascending;
+    intP13nData.find((col:any) => col.name === name).descending = nativeEvent.detail.item[0].descending;
+    intP13nData.push(intP13nData.splice(intP13nData.indexOf(intP13nData.find((col:any) => col.name === name)), 1)[0]);
+    setP13nData(JSON.parse(JSON.stringify(intP13nData)))
+  }
+
+  function handleP13nChangeGrouping({nativeEvent}: SyntheticEvent<HTMLElement,CustomEvent>) {
+    console.log(`Handle Change Grouping ${nativeEvent.detail.reason}`);
+  }
+
+  function handleClose(event: CustomEvent){
+    console.log(`Handle Close ${event.type}`);
+    setP13nOpen(false);  
+    if (event.detail.reason == "Submit"){
+      setTableData(JSON.parse(JSON.stringify(intP13nData)))
+      localStorage.setItem("p13nData", JSON.stringify(p13nData));
+      p13nData.filter( item => item.ascending).forEach( item2 =>
+        exercises.sort((a,b)=>(a[item2.name]>b[item2.name])? 1: -1)
+      )
+    }
+  }
+
+  return (
     <div>
-      <ui5-timer 
+      {/*}
+      <ui5-timer
         id="myTimer"
         ref={timerRef}
         title={exercise.name}
-        sub-title={"Exercise " + exercise.ex + "/" + exercises[exercises.length-1].ex}
-        sub-sub-title={"Round "+ exercise.round + "/" + exercises[exercises.length-1].round}
+        sub-title={
+          "Exercise " + exercise.ex + "/" + exercises[exercises.length - 1].ex
+        }
+        sub-sub-title={
+          "Round " +
+          exercise.round +
+          "/" +
+          exercises[exercises.length - 1].round
+        }
         duration={exercise.duration}
         vbox="0 0 1200 1200"
         ontimer-finished={handleTimerFinished}
         ontimer-start={handleTimerStart}
         ontimer-stop={handleTimerStop}
       />
-
-
-      <ui5-dialog id="dialog" style={{height:'40rem', width:'45rem'}} header-text="View Settings" open={p13nOpen}>
-
-        <ui5-tabcontainer fixed >
-          <ui5-tab text="Columns" selected height="100%">
-            <ui5-selection-panel
-            id="selectionPanel"
-            enable-count
-            enable-reorder
-            show-header
-            field-column="A Column"
-            active-column="Another one"
-            style={{width:'100%'}}
-            onchange={handleP13nChange}
-          >
-
-            <ui5-message-strip design="Positive" hide-close-button slot="messageStrip">Success Message</ui5-message-strip>
-              {p13nData.map((item: any, index: number) => (
-                <ui5-p13n-item
-                  key={index}
-                  name={item.name}
-                  label={item.label}
-                  selected={item.selected || undefined}
-                  visible={item.visible || undefined}
-                ></ui5-p13n-item>
-              ))}
-            </ui5-selection-panel>
-          </ui5-tab>
-          <ui5-tab text="Sort" height="100%">
-            <ui5-sort-panel id="sortPanel" title="Sort">
-              {p13nData.map((item: any, index: number) => (
-                <ui5-p13n-sort-item
-                  key={index}
-                  name={item.name}
-                  label={item.label}
-                  ascending="false"
-                  descending="false"
-                ></ui5-p13n-sort-item>
-              ))}            
-            </ui5-sort-panel>            
-          </ui5-tab>
-          <ui5-tab text="Group"></ui5-tab>
-        </ui5-tabcontainer>
-
-        <div slot="footer" style={{display: "flex", justifyContent: 'flex-end',width: '100%', alignItems: 'center'}}>
-          <div style={{flex: 1}}></div>
-          <ui5-button class="dialogCloser" design="Emphasized" style={{marginRight: '0.5rem'}} onClick={handleP13nDialog}>OK</ui5-button>
-          <ui5-button class="dialogCloser" design="Transparent" onClick={handleP13nCancel}>Cancel</ui5-button>
-        </div>
-
-      </ui5-dialog>
-
-
-
-      <ui5-bar id="tableToolbar" design="Header" accessible-name-ref="title" style={{top: 0, zIndex: 2, height: '50px'}}>
-			<ui5-title tabindsex="0" level="H3" id="title" slot="startContent">Exercises</ui5-title>
-      <ui5-button id="dialogOpener" icon="action-settings" slot="endContent" onClick={handleP13nDialogOpener}></ui5-button>
-		  </ui5-bar>
-      <ui5-table id="exercisesTable" overflowMode="Popin" onrow-click={handleRowClick}> 
-        <ui5-table-header-row slot="headerRow">
-          {tableData.filter((col:any)=>col.visible).map((col:any) => (
-            <ui5-table-header-cell id={col.name} ><span>{col.label}</span></ui5-table-header-cell>
+        */}
+      <ui5-p13n-popup
+        open={p13nOpen || undefined}
+        style={{ height: "55rem", width: "45rem" }}
+        title="Exercise List Settings"
+        onclose={handleClose}
+      >
+        <ui5-selection-panel
+          title="Select Columns"
+          onChange={handleP13nChangeSelection}
+          enable-reorder
+        >
+          {p13nData.map((item: any, index: number) => (
+            <ui5-p13n-item
+              key={index}
+              name={item.name}
+              label={item.label}
+              visible={item.visible || undefined}
+            ></ui5-p13n-item>
           ))}
+        </ui5-selection-panel>
+        <ui5-sort-panel title="Sort Columns" onChange={handleP13nChangeSorting}>
+          {p13nData.map((item: any, index: number) => (
+            <ui5-p13n-sort-item
+              key={index}
+              name={item.name}
+              label={item.label}
+              ascending={item.ascending || undefined}
+              descending={item.descending || undefined}
+            ></ui5-p13n-sort-item>
+          ))}
+        </ui5-sort-panel>
+        <ui5-group-panel
+          title="Group Column"
+          onChange={handleP13nChangeGrouping}
+        >
+          {p13nData.map((item: any, index: number) => (
+            <ui5-p13n-group-item
+              key={index}
+              name={item.name}
+              label={item.label}
+              grouped={item.grouped || undefined}
+            ></ui5-p13n-group-item>
+          ))}
+        </ui5-group-panel>
+        <ui5-filter-panel
+          title="Filter Column"
+          onChange={handleP13nChangeFilter}
+        >
+          {p13nData.map((item: any, index: number) => (
+            <ui5-p13n-filter-item
+              key={index}
+              name={item.name}
+              label={item.label}
+              filter={item.filter || undefined}
+            ></ui5-p13n-filter-item>
+          ))}
+        </ui5-filter-panel>
+      </ui5-p13n-popup>
 
+      <ui5-bar
+        id="tableToolbar"
+        design="Header"
+        accessible-name-ref="title"
+        style={{ top: 0, zIndex: 2, height: "50px" }}
+      >
+        <ui5-title tabindsex="0" level="H3" id="title" slot="startContent">
+          Exercises
+        </ui5-title>
+        <ui5-button
+          id="dialogOpener"
+          icon="action-settings"
+          slot="endContent"
+          onClick={handleP13nDialogOpener}
+        ></ui5-button>
+      </ui5-bar>
+      <ui5-table
+        id="exercisesTable"
+        overflowMode="Popin"
+        onrow-click={handleRowClick}
+      >
+        <ui5-table-header-row slot="headerRow">
+          {tableData
+            .filter((col: any) => col.visible)
+            .map((col: any) => (
+              <ui5-table-header-cell id={col.name}>
+                <span>{col.label}</span>
+              </ui5-table-header-cell>
+            ))}
         </ui5-table-header-row>
-          {exercises.map((ex) => (
-            <ui5-table-row row-key={ex.id} key={ex.id} interactive={tableIsInteractive}>
-               {textColor = (exercise.id === ex.id)? "var(--sapCriticalElementColor)" : "var(--sapTextColor)"}
-               {tableData.filter((col:any)=>col.visible).map((col:any) => (
-                  <ui5-table-cell><ui5-text><b style={{color: textColor}}>{ex[col.name]}</b></ui5-text></ui5-table-cell>
+        {exercises.map((ex) => (
+          <ui5-table-row
+            row-key={ex.id}
+            key={ex.id}
+            interactive={tableIsInteractive}
+          >
+            {
+              (textColor =
+                exercise.id === ex.id
+                  ? "var(--sapCriticalElementColor)"
+                  : "var(--sapTextColor)")
+            }
+            {tableData
+              .filter((col: any) => col.visible)
+              .map((col: any) => (
+                <ui5-table-cell>
+                  <ui5-text>
+                    <b style={{ color: textColor }}>{ex[col.name]}</b>
+                  </ui5-text>
+                </ui5-table-cell>
               ))}
-            </ui5-table-row>
-          ))} 
+          </ui5-table-row>
+        ))}
       </ui5-table>
     </div>
-
   );
 }
 

@@ -14,12 +14,17 @@ declare namespace JSX {
         "ui5-dialog": unknown;
         "ui5-selection-panel": unknown;
         "ui5-sort-panel": unknown;
+        "ui5-filter-panel": unknown;
+        "ui5-group-panel": unknown;
+        "ui5-p13n-filter-item": unknown;
         "ui5-p13n-sort-item": unknown;
+        "ui5-p13n-group-item": unknown;
         "ui5-tab": unknown;
         "ui5-tabcontainer": unknown;
         "ui5-message-strip": unknown;
         "ui5-bar": unknown;
         "ui5-title": unknown;
         "ui5-p13n-item": unknown;
+        "ui5-p13n-popup": unknown;
     }
   }
