@@ -2,11 +2,10 @@
 	"folders": [
 		{
 			"path": "."
+		},
+		{
+			"path": "../../dirkelko/ui5-timer"
 		}
 	],
-	"settings": {
-		"html.customData": [
-			"./node_modules/@ui5/webcomponents/dist/vscode.html-custom-data.json"
-		]
-	}
+	"settings": {}
 }

@@ -1,0 +1,23 @@
+Select (and Order)
+    change.reason = 
+        "Remove"
+        "Add"
+        "Move"
+        "RangeSelect"
+        "DeselectAll"
+        "SelectAll"
+
+Sort
+    "SortOrder"
+    item[]1 : [{name: string, ascending:boolean, descending:boolean}]
+
+    Remove "xyz" : {reason:"SortOrder", item: [{name:"xyz", ascending:false, descending:false}]}
+
+Group
+    "Group"
+    item[]1 : [{name: string, grouped: boolean}]
+
+Filter
+    "Filter"
+    item[]1 : [{name: string, filter: undefined || ""}]
+

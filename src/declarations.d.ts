@@ -25,6 +25,6 @@ declare namespace JSX {
         "ui5-bar": unknown;
         "ui5-title": unknown;
         "ui5-p13n-item": unknown;
-        "ui5-p13n-popup": unknown;
-    }
-  }
+        "ui5-p13n-popup": unknown;    
+        "ui5-p13n-condition": unknown;}
+}

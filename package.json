@@ -12,6 +12,7 @@
   "dependencies": {
     "@repo/webcomponents-p13n": "file:./p13n-package/repo-webcomponents-p13n-0.0.1.tgz",
     "@ui5/webcomponents": "^2.3.0",
+    "ui5-timer": "0.1.0",
     "react": "npm:react@rc",
     "react-dom": "npm:react-dom@rc"
   },
