@@ -35,25 +35,63 @@ import "@repo/webcomponents-p13n/dist/P13nFilterItem.js";
 
 //setTheme('sap_horizon_dark');
 
-const persistedP13nData = localStorage.getItem("p13nData") && JSON.parse(localStorage.getItem("p13nData")!);
+const persistedP13nColData = localStorage.getItem("p13nColData") && JSON.parse(localStorage.getItem("p13nColData")!);
+const persistedP13nSortData = localStorage.getItem("p13nSortData") && JSON.parse(localStorage.getItem("p13nSortData")!);
+const persistedP13nFilterData = localStorage.getItem("p13nFilterData") && JSON.parse(localStorage.getItem("p13nFilterData")!);
+const persistedP13nGroupData = localStorage.getItem("p13nGroupData") && JSON.parse(localStorage.getItem("p13nGroupData")!);
 
 type p13nType = {name: string, label: string, visible: boolean, descending: boolean, ascending: boolean, grouped: boolean, filter: any}
 
-let intP13nData = persistedP13nData || [
-  { name: "id",           label: "Id",          visible: true, descending: false, ascending: false, grouped: false, filter: undefined},
-  { name: "name",         label: "Name",        visible: true, descending: false, ascending: false, grouped: false, filter: undefined},
-  { name: "description",  label: "Description", visible: true, descending: false, ascending: false, grouped: false, filter: undefined},
-  { name: "round",        label: "Round",       visible: true, descending: false, ascending: false, grouped: false, filter: undefined},
-  { name: "duration",     label: "Duration",    visible: true, descending: false, ascending: false, grouped: false, filter: undefined}
+let colData = persistedP13nColData || [
+  { name: "id",           label: "Id",          visible: true},
+  { name: "name",         label: "Name",        visible: true},
+  { name: "description",  label: "Description", visible: true},
+  { name: "round",        label: "Round",       visible: true},
+  { name: "duration",     label: "Duration",    visible: true}
 ];
+
+let sortData = persistedP13nSortData || [
+  { name: "id",           label: "Id",          descending: false, ascending: false},
+  { name: "name",         label: "Name",        descending: false, ascending: false},
+  { name: "description",  label: "Description", descending: false, ascending: false},
+  { name: "round",        label: "Round",       descending: false, ascending: false},
+  { name: "duration",     label: "Duration",    descending: false, ascending: false}
+];
+
+let filterData = persistedP13nFilterData || [
+  { name: "id",           label: "Id",          filter: undefined},
+  { name: "name",         label: "Name",        filter: undefined},
+  { name: "description",  label: "Description", filter: undefined},
+  { name: "round",        label: "Round",       filter: undefined},
+  { name: "duration",     label: "Duration",    filter: undefined}
+];
+
+let groupData = persistedP13nGroupData || [
+  { name: "id",           label: "Id",          grouped: false},
+  { name: "name",         label: "Name",        grouped: false},
+  { name: "description",  label: "Description", grouped: false},
+  { name: "round",        label: "Round",       grouped: false},
+  { name: "duration",     label: "Duration",    grouped: false}
+];
+
 
 function App() {
   const [exercise, setExercise] = useState(exercises[0]);
   const [tableIsInteractive, setTableIsInteractive] = useState(true);
   const [p13nOpen, setP13nOpen] = useState(false);
-  const [p13nData, setP13nData] = useState(intP13nData);
-  const [p13nSortData, setP13nSortData] = useState(JSON.parse(JSON.stringify(intP13nData)));
-  const [tableData, setTableData] = useState(JSON.parse(JSON.stringify(intP13nData)));
+  
+  const [p13nColData, setP13nColData] = useState(structuredClone(colData));  
+  const [tableColData, setTableColData] = useState(structuredClone(colData));  
+  
+  const [p13nSortData, setP13nSortData] = useState(structuredClone(sortData));
+  const [tableSortData, setTableSortData] = useState(structuredClone(sortData));
+
+  const [p13nFilterData, setP13nFilterData] = useState(structuredClone(filterData));
+  const [tableFilterData, setTableFilterData] = useState(structuredClone(filterData));
+
+  const [p13nGroupData, setP13nGroupData] = useState(structuredClone(groupData));
+  const [tableGroupData, setTableGroupData] = useState(structuredClone(groupData));
+
   const timerRef: any = useRef(null);
 
   let textColor: string;
@@ -96,42 +134,29 @@ function App() {
     console.log(`Handle Dialog Change ${nativeEvent.detail.reason}`);
     const change = nativeEvent.detail
     if (change.reason === "Remove") {
-      intP13nData.find((col:p13nType)=> col.name === change.item[0].name).visible = false;
+      p13nColData.find((col:p13nType)=> col.name === change.item[0].name).visible = false;
     } else if (change.reason === "Add") {
-      intP13nData.find((col:p13nType)=> col.name === change.item[0].name).visible = true;
+      p13nColData.find((col:p13nType)=> col.name === change.item[0].name).visible = true;
     } else if (change.reason === "RangeSelect") {
       change.item.forEach((item:p13nType)=> {
-        intP13nData.find((col:p13nType) => col.name === item.name).visible = true;
+        p13nColData.find((col:p13nType) => col.name === item.name).visible = true;
       })
     }else if (change.reason === "DeselectAll") {
       change.item.forEach((item:p13nType)=> {
-        intP13nData.find((col:p13nType) => col.name === item.name).visible = false;
+        p13nColData.find((col:p13nType) => col.name === item.name).visible = false;
       })
     }else if (change.reason === "SelectAll") {
       change.item.forEach((item:p13nType)=> {
-        intP13nData.find((col:p13nType) => col.name === item.name).visible = true;
+        p13nColData.find((col:p13nType) => col.name === item.name).visible = true;
       })
     }else if (change.reason === "Move") {
-      const currentIndex = intP13nData.findIndex((col:p13nType) => col.name === change.item[0].name);
+      const currentIndex = p13nColData.findIndex((col:p13nType) => col.name === change.item[0].name);
       if (currentIndex !== -1) {
-        const [movedItem] = intP13nData.splice(currentIndex, 1); // Remove the item from its current position
-        intP13nData.splice(change.index, 0, movedItem); // Insert the item at the new position
+        const [movedItem] = p13nColData.splice(currentIndex, 1); // Remove the item from its current position
+        p13nColData.splice(change.index, 0, movedItem); // Insert the item at the new position
       }
     }
-    //let newP13nData = JSON.parse(JSON.stringify(intP13nData)); // Create a copy of the original array so that react sees that the order has been changed
-    setP13nData(JSON.parse(JSON.stringify(intP13nData)))
-  }
-
-  function handleP13nChangeFilter({nativeEvent}: SyntheticEvent<HTMLElement,CustomEvent>) {
-    console.log(`Handle Change Filter ${nativeEvent.detail.reason}`);
-    const change = nativeEvent.detail
-    if (change.reason === "Filter"){
-      change.item.forEach((item:p13nType)=> {
-        intP13nData.find((col:p13nType) => col.name === item.name).filter = item.filter
-      } )
-      setP13nData(JSON.parse(JSON.stringify(intP13nData)))
-
-    }
+    setP13nColData(structuredClone(p13nColData))
   }
 
   function handleP13nChangeSorting({nativeEvent}: SyntheticEvent<HTMLElement,CustomEvent>) {
@@ -144,26 +169,42 @@ function App() {
     setP13nSortData(JSON.parse(JSON.stringify(p13nSortData)))
   }
 
+  function handleP13nChangeFilter({nativeEvent}: SyntheticEvent<HTMLElement,CustomEvent>) {
+    console.log(`Handle Change Filter ${nativeEvent.detail.reason}`);
+    const change = nativeEvent.detail
+    if (change.reason === "Filter"){
+      change.item.forEach((item:p13nType)=> {
+        p13nFilterData.find((col:p13nType) => col.name === item.name).filter = item.filter
+      } )
+      setP13nFilterData(JSON.parse(JSON.stringify(p13nFilterData)))
+    }
+  }
+
   function handleP13nChangeGrouping({nativeEvent}: SyntheticEvent<HTMLElement,CustomEvent>) {
     console.log(`Handle Change Grouping ${nativeEvent.detail.reason}`);
     const change = nativeEvent.detail
     if (change.reason === "Group") {
-       intP13nData.find((col:p13nType)=> col.name === change.item[0].name).grouped = change.item[0].grouped;
+       p13nGroupData.find((col:p13nType)=> col.name === change.item[0].name).grouped = change.item[0].grouped;
     } else if (change.reason === "Replace") {
         change.item.forEach((item:p13nType)=> {
-          intP13nData.find((col:p13nType) => col.name === item.name).grouped = item.grouped;
+          p13nGroupData.find((col:p13nType) => col.name === item.name).grouped = item.grouped;
         })
     } 
-    setP13nData(JSON.parse(JSON.stringify(p13nSortData)))
+    setP13nGroupData(structuredClone(p13nGroupData))
   }
 
   function handleClose(event: CustomEvent){
     console.log(`Handle Close ${event.type}`);
     setP13nOpen(false);  
     if (event.detail.reason == "Submit"){
-      setTableData(JSON.parse(JSON.stringify(intP13nData)))
-      localStorage.setItem("p13nData", JSON.stringify(p13nData));
-      //exercises.sort(tableRowSorter(p13nSortData))
+      localStorage.setItem("p13nColData", JSON.stringify(p13nColData));
+      localStorage.setItem("p13nSortData", JSON.stringify(p13nSortData));
+      localStorage.setItem("p13nFilterData", JSON.stringify(p13nFilterData));
+      localStorage.setItem("p13nGroupData", JSON.stringify(p13nGroupData));
+      setTableColData(structuredClone(p13nColData));
+      setTableSortData(structuredClone(p13nSortData));
+      setTableFilterData(structuredClone(p13nFilterData));
+      setTableGroupData(structuredClone(p13nGroupData));
     }
   }
 
@@ -222,7 +263,7 @@ const tableRowSorter = (p13nSorters: p13nType[]) => (a: any,b: any) =>{
           onChange={handleP13nChangeSelection}
           enable-reorder
         >
-          {p13nData.map((item: any, index: number) => (
+          {p13nColData.map((item: any, index: number) => (
             <ui5-p13n-item
               key={index}
               name={item.name}
@@ -246,7 +287,7 @@ const tableRowSorter = (p13nSorters: p13nType[]) => (a: any,b: any) =>{
           title="Group Column"
           onChange={handleP13nChangeGrouping}
         >
-          {p13nData.map((item: any, index: number) => (
+          {p13nGroupData.map((item: any, index: number) => (
             <ui5-p13n-group-item
               key={index}
               name={item.name}
@@ -259,7 +300,7 @@ const tableRowSorter = (p13nSorters: p13nType[]) => (a: any,b: any) =>{
           title="Filter Column"
           onChange={handleP13nChangeFilter}
         >
-          {p13nData.map((item: any, index: number) => (
+          {p13nFilterData.map((item: any, index: number) => (
             <ui5-p13n-filter-item
               key={index}
               name={item.name}
@@ -292,7 +333,7 @@ const tableRowSorter = (p13nSorters: p13nType[]) => (a: any,b: any) =>{
         onrow-click={handleRowClick}
       >
         <ui5-table-header-row slot="headerRow">
-          {tableData
+          {tableColData
             .filter((col: any) => col.visible)
             .map((col: any) => (
               <ui5-table-header-cell id={col.name}>
@@ -301,10 +342,10 @@ const tableRowSorter = (p13nSorters: p13nType[]) => (a: any,b: any) =>{
             ))}
         </ui5-table-header-row>
         {exercises
-          .sort(tableRowSorter(p13nSortData))
+          .sort(tableRowSorter(tableSortData))
           .filter((ex) => {
             let returnValue = true;
-            tableData.filter(col=>col.filter).forEach((col: any) => {
+            tableFilterData.filter(col=>col.filter).forEach((col: any) => {
               if (col.filter !== ex[col.name].toString()) {
                 returnValue = false;
               }                
@@ -323,7 +364,7 @@ const tableRowSorter = (p13nSorters: p13nType[]) => (a: any,b: any) =>{
                   ? "var(--sapCriticalElementColor)"
                   : "var(--sapTextColor)")
             }
-            {tableData
+            {tableColData
               .filter((col: any) => col.visible)
               .map((col: any) => (
                 <ui5-table-cell>
